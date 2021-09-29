@@ -25,9 +25,7 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
   const [cart, setCart] = useState<Product[]>(() => {
     const storagedCart = localStorage.getItem('@RocketShoes:cart');
     
-    if (storagedCart) {
-      return JSON.parse(storagedCart);
-    }
+    if (storagedCart) return JSON.parse(storagedCart);
 
     return [];
   });
@@ -35,7 +33,6 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
   const addProduct = async (productId: number) => {
     try {
       const updatedCart = [...cart];
-      console.log(cart);
       const productExists = updatedCart.find(product => product.id === productId);
       const stock = await api.get(`/stock/${productId}`);
 
@@ -69,7 +66,7 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
       const updatedCart = [...cart];
       const productIndex = updatedCart.findIndex(product => product.id === productId);
 
-      if (productIndex >= 0) {
+      if (productIndex > 0) {
         updatedCart.splice(productIndex, 1);
         setCart(updatedCart);
         localStorage.setItem('@RocketShoes:cart', JSON.stringify(updatedCart));
@@ -86,9 +83,7 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
     amount,
   }: UpdateProductAmount) => {
     try {
-      if (amount <= 0) {
-        return;
-      }
+      if (amount <= 0) return;
 
       const stock = await api.get(`stock/${productId}`);
       const stockAmount = stock.data.amount;
